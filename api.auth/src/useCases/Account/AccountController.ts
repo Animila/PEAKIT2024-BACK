@@ -15,7 +15,7 @@ export class AccountController {
 
 		this.router.post('/users/register', this.register) // создать
 		this.router.post('/users/login', this.login) // создать
-		this.router.get('/users/:id') // получить пользователя
+		this.router.get('/users/:accountId', this.getUser) // получить пользователя
 		this.router.put('/users') // обновить
 	}
 
@@ -43,9 +43,16 @@ export class AccountController {
 		}
 	}
 
-	// private getMe(req: Request, res: Response) {
-	// 	res.send('тест')
-	// }
+	private getUser = async (req: IAccountRequest, res: Response) => {
+		const {accountId} = req.params
+		const account = await this.accountService.findAccountById(parseInt(accountId))
+		if(!account) {
+			res.status(404).send({message: 'Пользователь не найден'})
+			return
+		}
+		res.send({data: account})
+
+	}
 
 	public use(): Router {
 		return this.router

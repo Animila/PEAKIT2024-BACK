@@ -45,7 +45,7 @@ export default class AccountServiceImpl implements IAccountService {
         if (!guardResult.succeeded) return null
         const existAccount = await this.accountRepo.findById(accountId)
         if(!existAccount) return null
-        return existAccount
+        return AccountMap.toPersistence(existAccount)
 
     }
 
