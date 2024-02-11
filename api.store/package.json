@@ -1,0 +1,15 @@
+{
+  "name": "api.store",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "prisma": {
+    "schema": "src/infrastructures/prisma/prisma/schema.prisma"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

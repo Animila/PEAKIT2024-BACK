@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  authdbhack:
+    image: postgres:alpine3.18
+    volumes:
+      - ./api.auth/auth_db:/var/lib/postgresql/data
+    container_name: db.authhack
+    environment:
+      - POSTGRES_USER=${DEV_AUTH_DB_USER}
+      - POSTGRES_PASSWORD=${DEV_AUTH_DB_PASS}
+      - POSTGRES_DB=${DEV_AUTH_DATABASE}
+    ports:
+      - '${DEV_AUTH_DB_PORT}:5432'
+    expose:
+      - ${DEV_AUTH_DB_PORT}
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${DEV_AUTH_DB_USER} -d ${DEV_AUTH_DATABASE}',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: always
+
+  apiauthhack:
+    container_name: api.authhack
+    build:
+      context: ./api.auth
+      dockerfile: Dockerfile
+    volumes:
+      - ./api.auth:/app
+      - /app/node_modules
+    ports:
+      - '3453:3453'
+    links:
+      - authdbhack:authdbhack
+    restart: always
+
+  nginx:
+    image: macbre/nginx-brotli:1.19.6-http3
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+    ports:
+      - 80:80
+      - 443:443
+    container_name: nginx
+    expose:
+      - 443
+      - 80
+    environment:
+      NGINX_COMPRESS: 'brotli'
+    restart: always
+    # depends_on:
