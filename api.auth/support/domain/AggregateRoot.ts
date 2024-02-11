@@ -69,10 +69,11 @@ export abstract class AggregateRoot<T> extends Entity<T> {
 	 */
 	private logDomainEventAdded(domainEvent: IDomainEvent): void {
 		// Получение текущего агрегата.
+		// @ts-ignore
 		const thisClass = Reflect.getPrototypeOf(this)
 		// Получение добавленного доменного события.
-		const domainEventClass =
-			Reflect.getPrototypeOf(domainEvent)
+		// @ts-ignore
+		const domainEventClass = Reflect.getPrototypeOf(domainEvent)
 
 		console.info(
 			`[Создано доменое событие]:`,

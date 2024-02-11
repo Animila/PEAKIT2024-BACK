@@ -46,6 +46,7 @@ export class DomainEvents {
 	private static removeAggregateFromMarkedDispatchList(
 		aggregate: AggregateRoot<any>
 	): void {
+		// @ts-ignore
 		const index = this.markedAggregates.findIndex(a => a.equals(aggregate))
 		this.markedAggregates.splice(index, 1)
 	}
@@ -120,6 +121,7 @@ export class DomainEvents {
 	 * @param {IDomainEvent} event - Доменное событие для отправки.
 	 */
 	private static dispatch(event: IDomainEvent): void {
+		// @ts-ignore
 		const eventClassName: string = event.constructor.name
 
 		if (this.handlersMap.hasOwnProperty(eventClassName)) {
