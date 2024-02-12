@@ -40,6 +40,45 @@ services:
       - authdbhack:authdbhack
     restart: always
 
+  storedbhack:
+    image: postgres:alpine3.18
+    volumes:
+      - ./api.store/store_db:/var/lib/postgresql/data
+    container_name: db.storehack
+    environment:
+      - POSTGRES_USER=${DEV_STORE_DB_USER}
+      - POSTGRES_PASSWORD=${DEV_STORE_DB_PASS}
+      - POSTGRES_DB=${DEV_STORE_DATABASE}
+    ports:
+      - '${DEV_STORE_DB_PORT}:5432'
+    expose:
+      - ${DEV_STORE_DB_PORT}
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${DEV_STORE_DB_USER} -d ${DEV_STORE_DATABASE}',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: always
+
+  apistorehack:
+    container_name: api.storehack
+    build:
+      context: ./api.store
+      dockerfile: Dockerfile
+    volumes:
+      - ./api.store:/app
+      - /app/node_modules
+    ports:
+      - '8531:8531'
+    links:
+      - storedbhack:storedbhack
+    restart: always
+
   nginx:
     image: macbre/nginx-brotli:1.19.6-http3
     volumes:
