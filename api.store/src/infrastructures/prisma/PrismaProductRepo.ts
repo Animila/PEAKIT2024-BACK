@@ -7,8 +7,27 @@ export  class PrismaProductRepo implements IProductRepo {
 
     prisma = new PrismaClient()
 
-    async getAll(): Promise<Product[]> {
-        const products = await this.prisma.product.findMany()
+    async getAll(query: any): Promise<(Product | null)[]> {
+
+        const whereClause: any = {};
+
+        // Добавление фильтров, если они предоставлены в запросе
+        if (query.brand_id) {
+            whereClause.brand_id = parseInt(query.brand_id);
+        }
+
+        // Добавление поискового запроса, если он предоставлен
+        if (query.search) {
+            whereClause.OR = [
+                { title: { contains: query.search } },
+                { description: { contains: query.search } }
+            ];
+        }
+
+        const products = await this.prisma.product.findMany({
+            where: whereClause
+            
+        })
         const domainProducts = products.map(item => {
             return ProductMap.toDomain(item)
         })

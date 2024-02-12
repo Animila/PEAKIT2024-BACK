@@ -4,11 +4,13 @@ import {IBrandRepo} from "../../repositories/IBrandRepo";
 import {BrandMap} from "../../mappers/BrandMap";
 import {ICreateProductRequest} from "./ProductTDO";
 import {Product} from "../../domains/Product";
+import {ProductMap} from "../../mappers/ProductMap";
+import {IProductRepo} from "../../repositories/IProductRepo";
 
 export class ProductServiceImpl implements IProductService {
-    private brandRepo: IBrandRepo
-    constructor(brandRepo: IBrandRepo) {
-        this.brandRepo = brandRepo
+    private productRepo: IProductRepo
+    constructor(productRepo: IProductRepo) {
+        this.productRepo = productRepo
     }
     async create(brand: ICreateProductRequest): Promise<Product | null> {
         // const newBrand = Brand.create({
@@ -24,25 +26,30 @@ export class ProductServiceImpl implements IProductService {
         throw new Error('')
     }
 
-    async getAll(): Promise<any> {
-        const data = await this.brandRepo.getAll()
-        return await Promise.all(data.map(async item => {
-            if(item) return await BrandMap.toPersistence(item)
+    async getAll(query: any): Promise<any> {
+        const {brand_id, search, minPrice, maxPrice} = query
+        console.log(brand_id, search, minPrice, maxPrice)
+
+        const data = await this.productRepo.getAll({brand_id, search, minPrice, maxPrice})
+        return await Promise.all(data.map(async (item: any) => {
+            if(item) return await ProductMap.toPersistence(item)
             return null
         }))
 
     }
 
-    getByBrandId(brand_id: number): Promise<Product[] | null> {
-        return Promise.resolve(undefined);
+    async getByBrandId(brand_id: number): Promise<Product[] | null> {
+        throw new Error('')
     }
 
-    getById(id: number): Promise<Product | null> {
-        return Promise.resolve(undefined);
+    async getById(id: number): Promise<Product | null> {
+        const data = await this.productRepo.findById(id)
+        if(!data) throw new Error('Товар не найден')
+        return ProductMap.toPersistence(data)
     }
 
     search(text: string): Promise<Product[] | null> {
-        return Promise.resolve(undefined);
+        throw new Error('')
     }
 
 

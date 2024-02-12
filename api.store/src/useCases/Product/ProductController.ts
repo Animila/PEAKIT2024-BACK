@@ -18,7 +18,8 @@ export class ProductController {
 
     private getAll = async (req: IProductRequest, res: Response) => {
         try {
-            const data = await this.productService.getAll()
+            const { search, minPrice, maxPrice , brand_id} = req.query;
+            const data = await this.productService.getAll({brand_id, search, minPrice, maxPrice})
             res.send({data: data})
         } catch (err: any) {
             res.status(500).send({message: err.message})
@@ -39,7 +40,6 @@ export class ProductController {
     private create = async (req: IProductRequest<ICreateProductRequest>, res: Response) => {
         try {
             const data: ICreateProductRequest = req.body
-
             const result = await this.productService.create(data)
             res.send({data: data})
         } catch (err: any) {
