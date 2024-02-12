@@ -65,6 +65,31 @@ services:
       start_period: 10s
     restart: always
 
+  filedbhack:
+    image: postgres:alpine3.18
+    volumes:
+      - ./api.files/files_db:/var/lib/postgresql/data
+    container_name: db.filehack
+    environment:
+      - POSTGRES_USER=${DEV_FILE_DB_USER}
+      - POSTGRES_PASSWORD=${DEV_FILE_DB_PASS}
+      - POSTGRES_DB=${DEV_FILE_DATABASE}
+    ports:
+      - '${DEV_FILE_DB_PORT}:5432'
+    expose:
+      - ${DEV_FILE_DB_PORT}
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${DEV_FILE_DB_USER} -d ${DEV_FILE_DATABASE}',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: always
+
   apistorehack:
     container_name: api.storehack
     build:
@@ -79,13 +104,27 @@ services:
       - storedbhack:storedbhack
     restart: always
 
+  apifilehack:
+    container_name: api.filehack
+    build:
+      context: ./api.files
+      dockerfile: Dockerfile
+    volumes:
+      - ./api.files:/app
+      - /app/node_modules
+    ports:
+      - '8900:8900'
+    links:
+      - filedbhack:filedbhack
+    restart: always
+
   nginx:
     image: macbre/nginx-brotli:1.19.6-http3
     volumes:
       - ./nginx/conf:/etc/nginx/conf.d
       - ./nginx/ssl:/etc/nginx/ssl
     ports:
-      - 78:80
+      - 80:80
       - 434:443
     container_name: nginx
     environment:

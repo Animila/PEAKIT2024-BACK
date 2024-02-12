@@ -2,10 +2,6 @@ import express, { Request, Response, Router } from 'express'
 import {IAccountRequest, ILoginRequest, IRegisterRequestDTO} from "./IAccountDTO";
 import {IAccountService} from "./IAccountService";
 import {AccountMap} from "../../mappers/AccountMap";
-import {IAccountRepo} from "../../repositories/IAccountRepo";
-import {PrismaAccountRepo} from "../../infrastructures/prisma/PrismaAccountRepo";
-import AccountServiceImpl from "./AccountServiceImpl";
-import jwt from "jsonwebtoken";
 import {JWT} from "../../infrastructures/JWT/JWT";
 import {checkJWT} from "./AccountMiddleware";
 

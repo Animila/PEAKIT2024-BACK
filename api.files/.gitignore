@@ -3,3 +3,6 @@ storage
 package-lock.*
 .env
 /.idea
+src/infrastructures/prisma/prisma/*
+!src/infrastructures/prisma/prisma/schema.prisma
+files_db

@@ -4,6 +4,15 @@
 
 ## Установка
 
+Для работы необходимо установить [Docker](https://www.docker.com/) и Docker-compose.  
+1. Скачиваем проект
+```shell
+git clone https://github.com/Animila/PEAKIT2024-BACK
+cd PEAKIT2024-BACK
+```
+
+2. Ставим .env во все микросервисы
+
 ## Использование
 
 ## Лицензия
