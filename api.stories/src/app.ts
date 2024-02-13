@@ -2,12 +2,11 @@ import compression from 'compression'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import express, { Application } from 'express'
+import userAgent from 'express-useragent'
 import helmet from 'helmet'
 import http, { Server } from 'http'
 import morgan from 'morgan'
 import requestIp from 'request-ip'
-import fileUploads from 'express-fileupload'
-import path from "path";
 
 class App {
 	public express: Application
@@ -33,6 +32,7 @@ class App {
 
 	private initMiddleware(): void {
 		this.express.use(requestIp.mw())
+		this.express.use(userAgent.express())
 		this.express.use(helmet())
 		this.express.use(
 			cors({
@@ -45,19 +45,17 @@ class App {
 		this.express.use(express.json())
 		this.express.use(express.urlencoded({ extended: false }))
 		this.express.use(compression())
-		this.express.use(fileUploads())
-		this.express.use('/files/storage', express.static(path.join(__dirname, '../storage')))
 	}
 
 	private initRoutes(routes: express.Router[]): void {
 		routes.forEach(route => {
-			this.express.use('/files', route)
+			this.express.use('/stories', route)
 		})
 	}
 
 	public listen(): void {
 		this.server.listen(this.port, () => {
-			console.log(`Микросервис файлов запущен на ${this.port}`)
+			console.log(`Микросервис историй запущен на ${this.port}`)
 		})
 	}
 }

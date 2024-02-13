@@ -1,0 +1,34 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Like {
+  id         Int    @id @default(autoincrement())
+  account_id Int
+  stories_id Int
+  stories    Storie @relation(fields: [stories_id], references: [id])
+}
+
+model Slide {
+  id         Int    @id @default(autoincrement())
+  stories_id Int
+  order      Int
+  stories    Storie @relation(fields: [stories_id], references: [id])
+}
+
+model Storie {
+  id         Int     @id @default(autoincrement())
+  type       String
+  background String
+  like       Like[]
+  Slide      Slide[]
+}

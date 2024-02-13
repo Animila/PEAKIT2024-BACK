@@ -55,7 +55,7 @@ class App {
 
 	public listen(): void {
 		this.server.listen(this.port, () => {
-			console.log(`Микросервис авторизации запущен на ${this.port}`)
+			console.log(`Микросервис магазина запущен на ${this.port}`)
 		})
 	}
 }

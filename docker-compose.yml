@@ -118,13 +118,52 @@ services:
       - filedbhack:filedbhack
     restart: always
 
+  storiesdbhack:
+    image: postgres:alpine3.18
+    volumes:
+      - ./api.stories/stories_db:/var/lib/postgresql/data
+    container_name: db.storieshack
+    environment:
+      - POSTGRES_USER=${DEV_STORIES_DB_USER}
+      - POSTGRES_PASSWORD=${DEV_STORIES_DB_PASS}
+      - POSTGRES_DB=${DEV_STORIES_DATABASE}
+    ports:
+      - '${DEV_STORIES_DB_PORT}:5432'
+    expose:
+      - ${DEV_STORIES_DB_PORT}
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${DEV_STORIES_DB_USER} -d ${DEV_STORIES_DATABASE}',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: always
+
+  apistorieshack:
+    container_name: api.storieshack
+    build:
+      context: ./api.stories
+      dockerfile: Dockerfile
+    volumes:
+      - ./api.stories:/app
+      - /app/node_modules
+    ports:
+      - '9474:9474'
+    links:
+      - storiesdbhack:storiesdbhack
+    restart: always
+
   nginx:
     image: macbre/nginx-brotli:1.19.6-http3
     volumes:
       - ./nginx/conf:/etc/nginx/conf.d
       - ./nginx/ssl:/etc/nginx/ssl
     ports:
-      - 78:80
+      - 80:80
       - 434:443
     container_name: nginx
     environment:
